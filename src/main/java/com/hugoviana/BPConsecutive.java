@@ -20,6 +20,8 @@ public class BPConsecutive extends BitPacking {
 
     @Override
     public void compress(int[] array) {
+        this.originalLength = array.length;
+
         int max  = -1;
         for (int value : array) {
             if (value > max) {
@@ -36,8 +38,8 @@ public class BPConsecutive extends BitPacking {
         int compressedArrayIndex = 0;
         int bitCounter = 0;
         for (int value : array) {
-            for (int i = 0; i < this.bitSize; i++) {
-                this.compressedArray[compressedArrayIndex] |= (1 & (value >> i)) << bitCounter;
+            for (int position = 0; position < this.bitSize; position++) {
+                this.compressedArray[compressedArrayIndex] |= (1 & (value >> position)) << bitCounter;
 
                 bitCounter++;
                 if (bitCounter >= 32) {
@@ -50,7 +52,21 @@ public class BPConsecutive extends BitPacking {
 
     @Override
     public void decompress(int[] array) {
-        // À compléter
+        array = new int[this.originalLength];
+
+        int compressedArrayIndex = 0;
+        int bitCounter = 0;
+        for (int arrayIndex = 0; arrayIndex < this.originalLength; arrayIndex++) {
+            for (int position = 0; position < this.bitSize; position++) {
+                array[arrayIndex] |= (1 & (this.compressedArray[compressedArrayIndex] >> bitCounter)) << position;
+
+                bitCounter++;
+                if (bitCounter >= 32) {
+                    bitCounter = 0;
+                    compressedArrayIndex++;
+                }
+            }
+        }
     }
 
     @Override
