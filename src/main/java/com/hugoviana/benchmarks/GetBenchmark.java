@@ -14,11 +14,12 @@ import java.util.Random;
 @Measurement(iterations = 5)
 @Fork(1)
 @State(Scope.Thread)
-public class DecompressBenchmark {
+public class GetBenchmark {
 
     private int[] data;
     private BitPacking bpConsecutive;
     private BitPacking bpNonConsecutive;
+    private int index;
 
     @Setup(Level.Invocation)
     public void setup() {
@@ -29,18 +30,19 @@ public class DecompressBenchmark {
         bpNonConsecutive = BPFactory.createBitPacking("nonconsecutive");
 
         int[] copy = Arrays.copyOf(data, data.length);
+        index = random.nextInt(data.length);
 
         bpConsecutive.compress(copy);
         bpNonConsecutive.compress(copy);
     }
 
     @Benchmark
-    public void consecutiveDecompression() {
-        bpConsecutive.decompress(new int[data.length]);
+    public int consecutiveGet() {
+        return bpConsecutive.get(index);
     }
 
     @Benchmark
-    public void nonConsecutiveDecompression() {
-        bpNonConsecutive.decompress(new int[data.length]);
+    public int nonConsecutiveGet() {
+        return bpNonConsecutive.get(index);
     }
 }

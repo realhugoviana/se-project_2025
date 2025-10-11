@@ -18,18 +18,27 @@ public class CompressBenchmark {
 
     private int[] data;
     private BitPacking bpConsecutive;
+    private BitPacking bpNonConsecutive;
     private int[] copy;
 
     @Setup(Level.Invocation)
     public void setup() {
         Random random = new Random(42);
         data = random.ints(100_000, 0, 1_000_000).toArray();
+
         bpConsecutive = BPFactory.createBitPacking("consecutive");
+        bpNonConsecutive = BPFactory.createBitPacking("nonconsecutive");
+
         copy = Arrays.copyOf(data, data.length);
     }
 
     @Benchmark
     public void consecutiveCompression() {
         bpConsecutive.compress(copy);
+    }
+
+    @Benchmark
+    public void nonConsecutiveCompression() {
+        bpNonConsecutive.compress(copy);
     }
 }
