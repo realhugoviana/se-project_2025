@@ -17,7 +17,8 @@
 package com.hugoviana;
 
 public abstract class BitPacking {
-    protected int[] compressedData;
+    protected int[] compressedArray;
+    protected int bitSize;
 
     abstract void compress(int[] array);
 
