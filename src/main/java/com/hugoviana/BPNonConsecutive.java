@@ -17,15 +17,60 @@
 package com.hugoviana;
 
 public class BPNonConsecutive extends BitPacking {
+    private int bitsPerInteger;
 
     @Override
     public void compress(int[] array) {
-        // À compléter
+        this.originalLength = array.length;
+
+        int max  = -1;
+        for (int value : array) {
+            if (value > max) {
+                max = value;
+            }
+        }
+
+        this.bitSize = Integer.toBinaryString(max).length();
+        
+        this.bitsPerInteger = 32 / this.bitSize;
+        int compressedLength = this.originalLength / this.bitsPerInteger + (this.originalLength % this.bitsPerInteger == 0 ? 0 : 1);
+
+        this.compressedArray = new int[compressedLength];
+
+        int compressedArrayIndex = 0;
+        int bitCounter = 0;
+        for (int value : array) {
+            for (int position = 0; position < this.bitSize; position++) {
+                this.compressedArray[compressedArrayIndex] |= (1 & (value >> position)) << bitCounter;
+
+                bitCounter++;
+                if (bitCounter >= this.bitSize*bitsPerInteger) {
+                    bitCounter = 0;
+                    compressedArrayIndex++;
+                }
+            }
+        }
     }
 
     @Override
     public void decompress(int[] array) {
-        // À compléter
+        if (array.length != this.originalLength) {
+            throw new IllegalArgumentException("Array length does not match original length.");
+        }
+
+        int compressedArrayIndex = 0;
+        int bitCounter = 0;
+        for (int arrayIndex = 0; arrayIndex < this.originalLength; arrayIndex++) {
+            for (int position = 0; position < this.bitSize; position++) {
+                array[arrayIndex] |= (1 & (this.compressedArray[compressedArrayIndex] >> bitCounter)) << position;
+
+                bitCounter++;
+                if (bitCounter >= this.bitSize*this.bitsPerInteger) {
+                    bitCounter = 0;
+                    compressedArrayIndex++;
+                }
+            }
+        }
     }
 
     @Override

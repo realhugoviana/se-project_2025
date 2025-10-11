@@ -8,7 +8,7 @@ public class BPConsecutiveTest {
     
     @Test
     public void shouldPickMaxBitSize() {
-        BPConsecutive bp = new BPConsecutive();
+        BitPacking bp = BPFactory.createBitPacking("consecutive");
         int[] array = {3, 5, 7, 15, 31};
         bp.compress(array);
         System.out.println("Compressed Array: ");
@@ -17,7 +17,7 @@ public class BPConsecutiveTest {
 
     @Test
     public void shouldAllocateCorrectSize() {
-        BPConsecutive bp = new BPConsecutive();
+        BitPacking bp = BPFactory.createBitPacking("consecutive");
         int[] array = {65536, 65536};
         bp.compress(array);
         int expectedLength = 2;
@@ -26,7 +26,7 @@ public class BPConsecutiveTest {
 
     @Test
     public void shouldAllocateCorrectSize2() {
-        BPConsecutive bp = new BPConsecutive();
+        BitPacking bp = BPFactory.createBitPacking("consecutive");
         int[] array = {3};
         bp.compress(array);
         int expectedLength = bp.bitSize / 32 + (bp.bitSize % 32 == 0 ? 0 : 1);
@@ -35,7 +35,7 @@ public class BPConsecutiveTest {
 
     @Test
     public void shouldCompress3As3() {
-        BPConsecutive bp = new BPConsecutive();
+        BitPacking bp = BPFactory.createBitPacking("consecutive");
         int[] array = {3};
         bp.compress(array);
         assert bp.compressedArray[0] == 3;
@@ -43,7 +43,7 @@ public class BPConsecutiveTest {
 
     @Test
     public void shouldCompress5As5() {
-        BPConsecutive bp = new BPConsecutive();
+        BitPacking bp = BPFactory.createBitPacking("consecutive");
         int[] array = {5};
         bp.compress(array);
         assert bp.compressedArray[0] == 5;
@@ -51,7 +51,7 @@ public class BPConsecutiveTest {
 
     @Test
     public void shouldCompressAndDecompress() {
-        BPConsecutive bp = new BPConsecutive();
+        BitPacking bp = BPFactory.createBitPacking("consecutive");
         int[] array = {65536, 65536};
         bp.compress(array);
         int[] decompressedArray = new int[array.length];
@@ -62,7 +62,7 @@ public class BPConsecutiveTest {
 
     @Test
     public void shouldCompressAndDecompress2() {
-        BPConsecutive bp = new BPConsecutive();
+        BitPacking bp = BPFactory.createBitPacking("consecutive");
         int[] array = {3, 5, 7, 15, 31, 65536, 20, 1000, 50000, 65535, 12345, 54321, 32768, 16384, 8192, 4096};
         bp.compress(array);
         int[] decompressedArray = new int[array.length];
@@ -74,7 +74,7 @@ public class BPConsecutiveTest {
 
     @Test
     public void shouldThrowExceptionOnOutOfBoundsAccess() {
-        BPConsecutive bp = new BPConsecutive();
+        BitPacking bp = BPFactory.createBitPacking("consecutive");
         int[] array = {3, 5, 7, 15, 31};
         bp.compress(array);
         try {
@@ -87,7 +87,7 @@ public class BPConsecutiveTest {
 
     @Test
     public void shouldReturnCorrectValueOnGet() {
-        BPConsecutive bp = new BPConsecutive();
+        BitPacking bp = BPFactory.createBitPacking("consecutive");
         int[] array = {3, 5, 7, 15, 31, 65536, 20, 1000, 50000, 65535, 12345, 54321, 32768, 16384, 8192, 4096};
         bp.compress(array);
         for (int i = 0; i < array.length; i++) {
