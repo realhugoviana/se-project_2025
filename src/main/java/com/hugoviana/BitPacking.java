@@ -21,9 +21,9 @@ public abstract class BitPacking {
     protected int bitSize;
     protected int originalLength;
 
-    abstract void compress(int[] array);
+    public abstract void compress(int[] array);
 
-    abstract void decompress(int[] array);
+    public abstract void decompress(int[] array);
 
-    abstract int get(int i);
+    public abstract int get(int i);
 }

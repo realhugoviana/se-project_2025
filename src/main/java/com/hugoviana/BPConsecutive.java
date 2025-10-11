@@ -31,7 +31,7 @@ public class BPConsecutive extends BitPacking {
 
         this.bitSize = Integer.toBinaryString(max).length();
         
-        int compressedLength = this.bitSize / 32 + (this.bitSize % 32 == 0 ? 0 : 1);
+        int compressedLength = (this.bitSize*this.originalLength) / 32 + ((this.bitSize*this.originalLength) % 32 == 0 ? 0 : 1);
 
         this.compressedArray = new int[compressedLength];
 
