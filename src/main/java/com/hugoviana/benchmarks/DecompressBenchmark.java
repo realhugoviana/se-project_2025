@@ -14,22 +14,22 @@ import java.util.Random;
 @Measurement(iterations = 5)
 @Fork(1)
 @State(Scope.Thread)
-public class CompressBenchmark {
+public class DecompressBenchmark {
 
     private int[] data;
     private BitPacking bpConsecutive;
-    private int[] copy;
 
     @Setup(Level.Invocation)
     public void setup() {
         Random random = new Random(42);
         data = random.ints(100_000, 0, 1_000_000).toArray();
         bpConsecutive = BPFactory.createBitPacking("consecutive");
-        copy = Arrays.copyOf(data, data.length);
+        int[] copy = Arrays.copyOf(data, data.length);
+        bpConsecutive.compress(copy);
     }
 
     @Benchmark
-    public void consecutiveCompression() {
-        bpConsecutive.compress(copy);
+    public void consecutiveDecompression() {
+        bpConsecutive.decompress(new int[data.length]);
     }
 }
