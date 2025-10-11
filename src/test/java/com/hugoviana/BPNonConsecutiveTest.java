@@ -72,27 +72,27 @@ public class BPNonConsecutiveTest {
         }
     }
 
-    // @Test
-    // public void shouldThrowExceptionOnOutOfBoundsAccess() {
-    //     BitPacking bp = BPFactory.createBitPacking("nonconsecutive");
-    //     int[] array = {3, 5, 7, 15, 31};
-    //     bp.compress(array);
-    //     try {
-    //         bp.get(10);
-    //         assert false;
-    //     } catch (IndexOutOfBoundsException e) {
-    //         assert true;
-    //     }
-    // }
+    @Test
+    public void shouldThrowExceptionOnOutOfBoundsAccess() {
+        BitPacking bp = BPFactory.createBitPacking("nonconsecutive");
+        int[] array = {3, 5, 7, 15, 31};
+        bp.compress(array);
+        try {
+            bp.get(10);
+            assert false;
+        } catch (IndexOutOfBoundsException e) {
+            assert true;
+        }
+    }
 
-    // @Test
-    // public void shouldReturnCorrectValueOnGet() {
-    //     BitPacking bp = BPFactory.createBitPacking("nonconsecutive");
-    //     int[] array = {3, 5, 7, 15, 31, 65536, 20, 1000, 50000, 65535, 12345, 54321, 32768, 16384, 8192, 4096};
-    //     bp.compress(array);
-    //     for (int i = 0; i < array.length; i++) {
-    //         assertEquals(array[i], bp.get(i));
-    //     }
-    // }
+    @Test
+    public void shouldReturnCorrectValueOnGet() {
+        BitPacking bp = BPFactory.createBitPacking("nonconsecutive");
+        int[] array = {3, 5, 7, 15, 31, 65536, 20, 1000, 50000, 65535, 12345, 54321, 32768, 16384, 8192, 4096};
+        bp.compress(array);
+        for (int i = 0; i < array.length; i++) {
+            assertEquals(array[i], bp.get(i));
+        }
+    }
 
 }

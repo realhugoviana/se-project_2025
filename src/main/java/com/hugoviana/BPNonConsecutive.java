@@ -75,8 +75,21 @@ public class BPNonConsecutive extends BitPacking {
 
     @Override
     public int get(int i) {
-        // À compléter
-        return 0;
+        if (i < 0 || i >= this.originalLength) {
+            throw new IndexOutOfBoundsException("Index out of bounds: " + i);
+        }
+
+        int result = 0;
+        int position = (i % this.bitsPerInteger) * this.bitSize;
+        int compressedArrayIndex = i / this.bitsPerInteger + (i % this.bitsPerInteger == 0 ? 0 : 1);
+
+        for (int j = 0; j < this.bitSize; j++) {
+            result |= (1 & (this.compressedArray[compressedArrayIndex] >> (position))) << j;
+
+            position++;
+        }
+
+        return result;
     }
 
 }
