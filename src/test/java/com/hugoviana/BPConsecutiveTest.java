@@ -1,5 +1,7 @@
 package com.hugoviana;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
 
 public class BPConsecutiveTest {
@@ -54,8 +56,19 @@ public class BPConsecutiveTest {
         bp.compress(array);
         int[] decompressedArray = new int[array.length];
         bp.decompress(decompressedArray);
-        System.out.println("Decompressed Array: "   + decompressedArray[0] + ", " + decompressedArray[1]);
-        assert array[0] == decompressedArray[0];
-        assert array[1] == decompressedArray[1];
+        assertEquals(array[0], decompressedArray[0]);
+        assertEquals(array[1], decompressedArray[1]);
+    }
+
+    @Test
+    public void shouldCompressAndDecompress2() {
+        BPConsecutive bp = new BPConsecutive();
+        int[] array = {3, 5, 7, 15, 31, 65536, 20, 1000, 50000, 65535, 12345, 54321, 32768, 16384, 8192, 4096};
+        bp.compress(array);
+        int[] decompressedArray = new int[array.length];
+        bp.decompress(decompressedArray);
+        for (int i = 0; i < array.length; i++) {
+            assertEquals(array[i], decompressedArray[i]);  
+        }
     }
 }

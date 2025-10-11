@@ -52,7 +52,9 @@ public class BPConsecutive extends BitPacking {
 
     @Override
     public void decompress(int[] array) {
-        array = new int[this.originalLength];
+        if (array.length != this.originalLength) {
+            throw new IllegalArgumentException("Array length does not match original length.");
+        }
 
         int compressedArrayIndex = 0;
         int bitCounter = 0;
