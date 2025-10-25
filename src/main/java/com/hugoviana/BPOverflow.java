@@ -28,7 +28,7 @@ public class BPOverflow extends BitPacking {
 
         this.originalLength = array.length;
 
-        int[] effInts = new int[31]; 
+        int[] effInts = new int[32]; 
 
         for (int value : array) {
             effInts[Integer.toBinaryString(value).length() - 1]++;
@@ -129,7 +129,7 @@ public class BPOverflow extends BitPacking {
 
         int result = 0;
         int position = (i % this.bitsPerInteger) * this.bitSize;
-        int compressedArrayIndex = i / this.bitsPerInteger + (i % this.bitsPerInteger == 0 ? 0 : 1);
+        int compressedArrayIndex = i / this.bitsPerInteger;
 
         for (int j = 0; j < this.bitSize; j++) {
             result |= (1 & (this.compressedArray[compressedArrayIndex] >> (position))) << j;

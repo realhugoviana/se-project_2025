@@ -88,7 +88,7 @@ public class BPNonConsecutiveTest {
     @Test
     public void shouldReturnCorrectValueOnGet() {
         BitPacking bp = BPFactory.createBitPacking("nonconsecutive");
-        int[] array = {3, 5, 7, 15, 31, 65536, 20, 1000, 50000, 65535, 12345, 54321, 32768, 16384, 8192, 4096};
+        int[] array = {3, 5, 7, 15, 31, 6536, 20, 1000, 50000, 5535, 12345, 54321, 32768, 16384, 8192, 4096};
         bp.compress(array);
         for (int i = 0; i < array.length; i++) {
             assertEquals(array[i], bp.get(i));

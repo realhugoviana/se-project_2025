@@ -26,6 +26,8 @@ public class BPFactory {
                 return new BPConsecutive();
             case "nonconsecutive":
                 return new BPNonConsecutive();
+            case "overflow":
+                return new BPOverflow();
             default:
                 throw new IllegalArgumentException("Type de compression inconnu : " + typeCompression);
         }
