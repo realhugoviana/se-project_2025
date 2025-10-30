@@ -19,6 +19,7 @@ public class GetBenchmark {
     private int[] data;
     private BitPacking bpConsecutive;
     private BitPacking bpNonConsecutive;
+    private BitPacking bpOverflow;
     private int index;
 
     @Setup(Level.Invocation)
@@ -28,12 +29,14 @@ public class GetBenchmark {
 
         bpConsecutive = BPFactory.createBitPacking("consecutive");
         bpNonConsecutive = BPFactory.createBitPacking("nonconsecutive");
+        bpOverflow = BPFactory.createBitPacking("overflow");
 
         int[] copy = Arrays.copyOf(data, data.length);
         index = random.nextInt(data.length);
 
         bpConsecutive.compress(copy);
         bpNonConsecutive.compress(copy);
+        bpOverflow.compress(copy);
     }
 
     @Benchmark
@@ -44,5 +47,10 @@ public class GetBenchmark {
     @Benchmark
     public int nonConsecutiveGet() {
         return bpNonConsecutive.get(index);
+    }
+
+    @Benchmark
+    public int overflowGet() {
+        return bpOverflow.get(index);
     }
 }

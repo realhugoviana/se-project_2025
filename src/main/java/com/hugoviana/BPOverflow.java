@@ -35,7 +35,7 @@ public class BPOverflow extends BitPacking {
         }
 
         int compressedLength = Integer.MAX_VALUE;
-        for (int i = 1; i <= 32; i++) {
+        for (int i = 1; i < 32; i++) {
             if (effInts[i - 1] != 0) {
                 if (i >= 31 && 32*this.originalLength < compressedLength) {
                     compressedLength = 32*this.originalLength;

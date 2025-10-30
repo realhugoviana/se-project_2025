@@ -19,6 +19,7 @@ public class DecompressBenchmark {
     private int[] data;
     private BitPacking bpConsecutive;
     private BitPacking bpNonConsecutive;
+    private BitPacking bpOverflow;
 
     @Setup(Level.Invocation)
     public void setup() {
@@ -27,11 +28,13 @@ public class DecompressBenchmark {
 
         bpConsecutive = BPFactory.createBitPacking("consecutive");
         bpNonConsecutive = BPFactory.createBitPacking("nonconsecutive");
+        bpOverflow = BPFactory.createBitPacking("overflow");
 
         int[] copy = Arrays.copyOf(data, data.length);
 
         bpConsecutive.compress(copy);
         bpNonConsecutive.compress(copy);
+        bpOverflow.compress(copy);
     }
 
     @Benchmark
@@ -42,5 +45,10 @@ public class DecompressBenchmark {
     @Benchmark
     public void nonConsecutiveDecompression() {
         bpNonConsecutive.decompress(new int[data.length]);
+    }
+
+    @Benchmark
+    public void overflowDecompression() {
+        bpOverflow.decompress(new int[data.length]);
     }
 }
