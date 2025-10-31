@@ -26,4 +26,8 @@ public abstract class BitPacking {
     public abstract void decompress(int[] array);
 
     public abstract int get(int i);
+    
+    public int[] getCompressedArray() {
+        return this.compressedArray;
+    }
 }

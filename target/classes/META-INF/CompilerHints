@@ -3,6 +3,14 @@ dontinline,*.*_avgt_jmhStub
 dontinline,*.*_sample_jmhStub
 dontinline,*.*_ss_jmhStub
 dontinline,*.*_thrpt_jmhStub
+inline,com/hugoviana/benchmarks/CompressBenchmark.consecutiveCompression
+inline,com/hugoviana/benchmarks/CompressBenchmark.nonConsecutiveCompression
+inline,com/hugoviana/benchmarks/CompressBenchmark.overflowCompression
+inline,com/hugoviana/benchmarks/CompressBenchmark.setup
+inline,com/hugoviana/benchmarks/DecompressBenchmark.consecutiveDecompression
+inline,com/hugoviana/benchmarks/DecompressBenchmark.nonConsecutiveDecompression
+inline,com/hugoviana/benchmarks/DecompressBenchmark.overflowDecompression
+inline,com/hugoviana/benchmarks/DecompressBenchmark.setup
 inline,com/hugoviana/benchmarks/GetBenchmark.consecutiveGet
 inline,com/hugoviana/benchmarks/GetBenchmark.nonConsecutiveGet
 inline,com/hugoviana/benchmarks/GetBenchmark.overflowGet
