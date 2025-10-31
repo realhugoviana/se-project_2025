@@ -20,6 +20,5 @@ public class App {
     public static void main(String[] args) throws Exception {
         CompressionTime ct = new CompressionTime(42, 1000, 100_000);
         ct.run();
-
     }
 }

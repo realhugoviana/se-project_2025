@@ -17,8 +17,9 @@
 package com.hugoviana;
 
 public class BPOverflow extends BitPacking {
-    private int bitsPerInteger;
-    private int overflowIndex;
+    private int overflowBitSize;
+    private int numCompressed;
+    private int overflowNum;
 
     @Override
     public void compress(int[] array) {
@@ -28,66 +29,74 @@ public class BPOverflow extends BitPacking {
 
         this.originalLength = array.length;
 
-        int[] effInts = new int[32]; 
+        int[] effInts = new int[31]; 
+        int maxLength = 0;
 
         for (int value : array) {
-            effInts[Integer.toBinaryString(value).length() - 1]++;
+            int length = Integer.toBinaryString(value).length();
+
+            if (length > maxLength) {
+                maxLength = length;
+            }
+
+            while (length >= 1) {
+                effInts[length-1]++;
+                length--;
+            }
         }
 
         int compressedLength = Integer.MAX_VALUE;
-        for (int i = 1; i < 32; i++) {
-            if (effInts[i - 1] != 0) {
-                if (i >= 31 && 32*this.originalLength < compressedLength) {
-                    compressedLength = 32*this.originalLength;
-                    this.bitSize = 32;
-                    this.bitsPerInteger = 1;
-
-                }
-                else {
-                    int currentNumOverflow = 0;
-
-                    for (int j = i + 1; j <= 32; j++) {
-                        currentNumOverflow += effInts[j - 1];
-                    }
-
-                    int currentBitSize = (i > Integer.toBinaryString(currentNumOverflow).length())? i + 1 : Integer.toBinaryString(currentNumOverflow).length() + 1;
-                    int curentBitsPerInteger = 32/(currentBitSize);
-                    int currentCompressedLength = (this.originalLength / curentBitsPerInteger) + (this.originalLength % curentBitsPerInteger == 0 ? 0 : 1) + currentNumOverflow;
+        this.overflowNum = 0;
+        for (int i = 1; i <= maxLength; i++) {
+            for (int j = i; j <= maxLength; j++) {
+                if (Integer.toBinaryString(this.originalLength - effInts[i-1]).length() <= i) {
+                    int totalBits = ((this.originalLength * (i+1)) + ((this.originalLength - effInts[i-1]) * j));
+                    int currentCompressedLength = totalBits / 32 + (totalBits % 32 == 0 ? 0 : 1);
 
                     if (currentCompressedLength < compressedLength) {
                         compressedLength = currentCompressedLength;
-                        this.bitSize = currentBitSize;
-                        this.bitsPerInteger = curentBitsPerInteger;
+                        this.bitSize = i+1;
+                        this.overflowBitSize = j;
+                        this.numCompressed = effInts[i-1];
+                        this.overflowNum = this.originalLength - effInts[i-1];
                     }
                 }
             }
         }
 
         this.compressedArray = new int[compressedLength];
-        this.overflowIndex = (this.originalLength / this.bitsPerInteger) + (this.originalLength % this.bitsPerInteger == 0 ? 0 : 1);
+        int[] toOverflow = new int[this.overflowNum];
 
-        int overflowCounter = 0;
+        int overflowIndex = 0;
         int compressedArrayIndex = 0;
         int bitCounter = 0;
         for (int value : array) {
             for (int position = 0; position < this.bitSize; position++) {
-                if (Integer.toBinaryString(value).length() > this.bitSize - 1) {
-                    this.compressedArray[compressedArrayIndex] |= (1 & ((overflowCounter + (1 << (this.bitSize - 1))) >> position)) << bitCounter;
+                if (Integer.toBinaryString(value).length() > this.bitSize-1) {
+                    this.compressedArray[compressedArrayIndex] |= (1 & ((overflowIndex + (1 << (this.bitSize - 1))) >> position)) << bitCounter;
+                    toOverflow[overflowIndex] = value;
                 }
                 else {
                     this.compressedArray[compressedArrayIndex] |= (1 & (value >> position)) << bitCounter;
                 }
 
                 bitCounter++;
-                if (bitCounter >= this.bitSize*bitsPerInteger) {
+                if (bitCounter >= 32) {
                     bitCounter = 0;
                     compressedArrayIndex++;
                 }
             }
+        }
 
-            if (Integer.toBinaryString(value).length() > this.bitSize - 1) {
-                this.compressedArray[overflowIndex + overflowCounter] = value;
-                overflowCounter++;
+        for (int overflowValue : toOverflow) {
+            for (int position = 0; position < this.overflowBitSize; position++) {
+                this.compressedArray[compressedArrayIndex] |= (1 & (overflowValue >> position)) << bitCounter;
+
+                bitCounter++;
+                if (bitCounter >= 32) {
+                    bitCounter = 0;
+                    compressedArrayIndex++;
+                }
             }
         }
     }
@@ -98,25 +107,35 @@ public class BPOverflow extends BitPacking {
             throw new IllegalArgumentException("Array length does not match original length.");
         }
 
+        int[] fromOverflow = new int[this.overflowNum];
+        int overflowIndex = 0;
         int compressedArrayIndex = 0;
         int bitCounter = 0;
         for (int arrayIndex = 0; arrayIndex < this.originalLength; arrayIndex++) {
-            int bitPackedValue = 0;
             for (int position = 0; position < this.bitSize; position++) {
-                bitPackedValue|= (1 & (this.compressedArray[compressedArrayIndex] >> bitCounter)) << position;
+                array[arrayIndex] |= (1 & (this.compressedArray[compressedArrayIndex] >> bitCounter)) << position;
 
                 bitCounter++;
-                if (bitCounter >= this.bitSize*this.bitsPerInteger) {
+                if (bitCounter >= 32) {
                     bitCounter = 0;
                     compressedArrayIndex++;
                 }
             }
-
-            if (bitPackedValue >> (this.bitSize - 1) == 1 && this.bitSize != 32) {
-                array[arrayIndex] = this.compressedArray[this.overflowIndex + (bitPackedValue - (1 << (this.bitSize - 1)))];
+            if (array[arrayIndex] >> (this.bitSize-1) == 1 && this.bitSize != 32) {
+                fromOverflow[overflowIndex] = arrayIndex;
+                overflowIndex++;
             }
-            else {
-                array[arrayIndex] = bitPackedValue;
+        }
+
+        for (int index = 0; index < this.overflowNum; index++) {
+            for (int position = 0; position < this.overflowBitSize; position++) {
+                array[fromOverflow[index]] |= (1 & (this.compressedArray[compressedArrayIndex] >> bitCounter)) << position;
+
+                bitCounter++;
+                if (bitCounter >= 32) {
+                    bitCounter = 0;
+                    compressedArrayIndex++;
+                }
             }
         }
     }
