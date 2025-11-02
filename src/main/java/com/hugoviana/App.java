@@ -18,7 +18,7 @@ package com.hugoviana;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        CompressionTime ct = new CompressionTime(42, 1000, 100_000);
+        CompressionTime ct = new CompressionTime(42, 10_000, 1_000, 10_000);
         ct.run();
     }
 }

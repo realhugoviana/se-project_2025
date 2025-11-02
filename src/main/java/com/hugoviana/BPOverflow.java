@@ -29,7 +29,7 @@ public class BPOverflow extends BitPacking {
         this.originalLength = array.length;
 
         int[] effInts = new int[31]; 
-        int[] effCumulInts = new int[31];
+        int[] effCumulInts = new int[32];
         int maxLength = 0;
 
         for (int value : array) {

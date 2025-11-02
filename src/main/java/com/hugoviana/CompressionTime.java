@@ -7,16 +7,18 @@ public class CompressionTime {
     private Random random;
     private int _runs;
     private int _maxSize;
+    private int _intMax;
 
     private int[] data;
     private BitPacking bpConsecutive;
     private BitPacking bpNonConsecutive;
     private BitPacking bpOverflow;
 
-    public CompressionTime(int seed, int runs, int maxSize) throws IOException {
+    public CompressionTime(int seed, int runs, int maxSize, int intMax) throws IOException {
         this.random = new Random(seed);
         this._runs = runs;
         this._maxSize = maxSize;
+        this._intMax = intMax;
 
         this.bpConsecutive = BPFactory.createBitPacking("consecutive");
         this.bpNonConsecutive = BPFactory.createBitPacking("nonconsecutive");
@@ -24,6 +26,9 @@ public class CompressionTime {
 
         String[] header = {"Run", 
                            "Original size",  
+                           "Min",
+                           "Max",
+                           "Sum",
                            "Consecutive Compression (ns)", 
                            "Consecutive Size",
                            "Consecutive Decompression (ns)",
@@ -71,75 +76,86 @@ public class CompressionTime {
     public void run() throws IOException {
         for (int i = 0; i < this._runs; i++) {
             int arraySize = this.random.nextInt(this._maxSize) + 1;
-            data = random.ints(arraySize, 0, Integer.MAX_VALUE).toArray();
+            data = random.ints(arraySize, 0, this._intMax).toArray();
 
-            long[] thisRun = new long[17];
+            long[] thisRun = new long[20];
             thisRun[0] = i;
             thisRun[1] = arraySize;
             long startTime, endTime;
+            int min = Integer.MAX_VALUE;
+            int max = 0;
+            long sum = 0;
+            for(int value : data) {
+                if (value < min) min = value;
+                if (value > max) max = value;
+                sum += value; 
+            }
+            thisRun[2] = min;
+            thisRun[3] = max;
+            thisRun[4] = sum;
 
             startTime = System.nanoTime();
             bpConsecutive.compress(data);
             endTime = System.nanoTime();
 
-            thisRun[2] = endTime - startTime;
+            thisRun[5] = endTime - startTime;
 
-            thisRun[3] = bpConsecutive.getCompressedArray().length;
+            thisRun[6] = bpConsecutive.getCompressedArray().length;
 
             startTime = System.nanoTime();
             bpConsecutive.decompress(new int[arraySize]);
             endTime = System.nanoTime();
 
-            thisRun[4] = endTime - startTime;
-            thisRun[5] = thisRun[2] + thisRun[4];
+            thisRun[7] = endTime - startTime;
+            thisRun[8] = thisRun[5] + thisRun[7];
 
             startTime = System.nanoTime();
             bpConsecutive.get(this.random.nextInt(arraySize));
             endTime = System.nanoTime();
 
-            thisRun[6] = endTime - startTime;
+            thisRun[9] = endTime - startTime;
 
             startTime = System.nanoTime();
             bpNonConsecutive.compress(data);
             endTime = System.nanoTime();
 
-            thisRun[7] = endTime - startTime;
+            thisRun[10] = endTime - startTime;
 
-            thisRun[8] = bpNonConsecutive.getCompressedArray().length;
+            thisRun[11] = bpNonConsecutive.getCompressedArray().length;
 
             startTime = System.nanoTime();
             bpNonConsecutive.decompress(new int[arraySize]);
             endTime = System.nanoTime();
 
-            thisRun[9] = endTime - startTime;
-            thisRun[10] = thisRun[7] + thisRun[9];
+            thisRun[12] = endTime - startTime;
+            thisRun[13] = thisRun[10] + thisRun[12];
 
             startTime = System.nanoTime();
             bpNonConsecutive.get(this.random.nextInt(arraySize));
             endTime = System.nanoTime();
 
-            thisRun[11] = endTime - startTime;
+            thisRun[14] = endTime - startTime;
 
             startTime = System.nanoTime();
             bpOverflow.compress(data);
             endTime = System.nanoTime();
 
-            thisRun[12] = endTime - startTime;
+            thisRun[15] = endTime - startTime;
 
-            thisRun[13] = bpOverflow.getCompressedArray().length;
+            thisRun[16] = bpOverflow.getCompressedArray().length;
 
             startTime = System.nanoTime();
             bpOverflow.decompress(new int[arraySize]);
             endTime = System.nanoTime();
 
-            thisRun[14] = endTime - startTime;
-            thisRun[15] = thisRun[12] + thisRun[14];
+            thisRun[17] = endTime - startTime;
+            thisRun[18] = thisRun[15] + thisRun[17];
 
             startTime = System.nanoTime();
             bpOverflow.get(this.random.nextInt(arraySize));
             endTime = System.nanoTime();
 
-            thisRun[16] = endTime - startTime;
+            thisRun[19] = endTime - startTime;
 
             ajouteAuCSV(thisRun);
         }
