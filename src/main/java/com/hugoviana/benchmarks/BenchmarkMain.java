@@ -8,7 +8,7 @@ import org.openjdk.jmh.runner.RunnerException;
 public class BenchmarkMain {
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include("com.hugoviana.benchmarks.*") // run all benchmark classes
+                .include("com.hugoviana.benchmarks.*")
                 .forks(1)
                 .build();
 

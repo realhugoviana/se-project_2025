@@ -24,37 +24,37 @@ public class CompressionTime {
         this.bpNonConsecutive = BPFactory.createBitPacking("nonconsecutive");
         this.bpOverflow = BPFactory.createBitPacking("overflow");
 
-        String[] header = {"Run", 
-                           "Original size",  
-                           "Min",
-                           "Max",
-                           "Sum",
-                           "Consecutive Compression (ns)", 
-                           "Consecutive Size",
-                           "Consecutive Decompression (ns)",
-                           "Consective Total Time (ns)",
-                           "Consecutive Get (ns)",
-                           "Non-Consecutive Compression (ns)", 
-                           "Non-Consecutive Size",
-                           "Non-Consecutive Decompression (ns)",
-                           "Non-Consecutive Total Time (ns)",
-                           "Non-Consecutive Get (ns)",
-                           "Overflow Compression (ns)",
-                           "Overflow Size",
-                           "Overflow Decompression (ns)",
-                            "Overflow Total Time (ns)",
-                           "Overflow Get (ns)"};
-        String filePath = "compression_times.csv";
+        // String[] header = {"Run", 
+        //                    "Original size",  
+        //                    "Min",
+        //                    "Max",
+        //                    "Sum",
+        //                    "Consecutive Compression (ns)", 
+        //                    "Consecutive Size",
+        //                    "Consecutive Decompression (ns)",
+        //                    "Consective Total Time (ns)",
+        //                    "Consecutive Get (ns)",
+        //                    "Non-Consecutive Compression (ns)", 
+        //                    "Non-Consecutive Size",
+        //                    "Non-Consecutive Decompression (ns)",
+        //                    "Non-Consecutive Total Time (ns)",
+        //                    "Non-Consecutive Get (ns)",
+        //                    "Overflow Compression (ns)",
+        //                    "Overflow Size",
+        //                    "Overflow Decompression (ns)",
+        //                     "Overflow Total Time (ns)",
+        //                    "Overflow Get (ns)"};
+        // String filePath = "compression_times.csv";
 
-        try (PrintWriter pw = new PrintWriter(new FileWriter(filePath, true))) {
-            for (int i = 0; i < header.length; i++) {
-                pw.print(header[i]);
-                if (i < header.length - 1) {
-                    pw.print(",");
-                }
-            }
-            pw.println();
-        }
+        // try (PrintWriter pw = new PrintWriter(new FileWriter(filePath, true))) {
+        //     for (int i = 0; i < header.length; i++) {
+        //         pw.print(header[i]);
+        //         if (i < header.length - 1) {
+        //             pw.print(",");
+        //         }
+        //     }
+        //     pw.println();
+        // }
     }
 
     private void ajouteAuCSV(long[] run) throws IOException {
@@ -76,7 +76,8 @@ public class CompressionTime {
     public void run() throws IOException {
         for (int i = 0; i < this._runs; i++) {
             int arraySize = this.random.nextInt(this._maxSize) + 1;
-            data = random.ints(arraySize, 0, this._intMax).toArray();
+            int intMax2 = this.random.nextInt(this._intMax) + 1;
+            data = random.ints(arraySize, 0, intMax2).toArray();
 
             long[] thisRun = new long[20];
             thisRun[0] = i;
